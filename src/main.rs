@@ -1,6 +1,12 @@
+mod engine;
+mod automatons;
+
 use macroquad::prelude::*;
 use ::rand::prelude::*;
 use std::{thread, time};
+
+use crate::engine::Engine;
+use crate::automatons::Automaton;
 
 struct Grid {
     width: u32,
@@ -42,12 +48,34 @@ impl Grid {
     }
 }
 
+enum State {
+    Menu,
+    Running,
+    Paused
+}
+
+pub struct Simulator {
+    state: State,
+    automatons: Vec<Box<dyn Automaton>>
+}
+
+impl Simulator {
+    pub fn new(automatons: Vec<Box<dyn Automaton>>) -> Simulator {
+        Simulator { state: State::Menu, automatons}
+    }
+}
+
 #[macroquad::main("cellular-automatons")]
 async fn main() {
     let mut grid = Grid::new(40, 40);
 
+    let automatons = Vec::new();
+    let engine = Engine::new(automatons);
+
     loop {
         render(&grid);
+
+        engine.tick();
 
         grid.cells = iterate(&grid);
 
