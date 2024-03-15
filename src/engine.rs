@@ -3,7 +3,7 @@
 /// simulation running, simulation paused), instanciates all the other
 /// modules (automatons, cameras, etc.) and handles the simulation
 /// each tick before requesting the rendering of the frame
-use crate::automatons::Automaton;
+use crate::automatons::*;
 use macroquad::ui;
 use macroquad::input;
 
@@ -47,12 +47,19 @@ impl Engine {
                 _ => ()
             }
         }
-        //self.currentAutomaton.as_mut().expect("NO_AUTOMATON").iterate();
+
+        if self.state == EngineState::Running {
+            self.currentAutomaton.as_mut().expect("NO_AUTOMATON").iterate();
+        }
+        if [EngineState::Running, EngineState::Paused].contains(&self.state) {
+            self.currentAutomaton.as_mut().expect("NO_AUTOMATON").render();
+        }
     }
 
     pub fn render(&mut self) {
         if self.state == EngineState::Menu {
-            if ui::root_ui().button(None, "Push me") {
+            if ui::root_ui().button(None, "Start the simulation") {
+                self.currentAutomaton = Some(Box::new(GameOfLife::new(40, 40)));
                 self.state = EngineState::Running;
             }
         }

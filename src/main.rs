@@ -67,18 +67,18 @@ impl Simulator {
 
 #[macroquad::main("cellular-automatons")]
 async fn main() {
-    let mut grid = Grid::new(40, 40);
+    //let mut grid = Grid::new(40, 40);
 
     let automatons = Vec::new();
     let mut engine = Engine::new(automatons);
 
     loop {
-        render(&grid);
+        //render(&grid);
 
         engine.update();
         engine.render();
 
-        grid.cells = iterate(&grid);
+        //grid.cells = iterate(&grid);
 
         //let one_tenth = time::Duration::from_millis(100);
         //thread::sleep(one_tenth);
