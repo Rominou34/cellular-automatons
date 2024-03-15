@@ -70,12 +70,13 @@ async fn main() {
     let mut grid = Grid::new(40, 40);
 
     let automatons = Vec::new();
-    let engine = Engine::new(automatons);
+    let mut engine = Engine::new(automatons);
 
     loop {
         render(&grid);
 
-        engine.tick();
+        engine.update();
+        engine.render();
 
         grid.cells = iterate(&grid);
 

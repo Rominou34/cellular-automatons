@@ -4,7 +4,10 @@
 /// modules (automatons, cameras, etc.) and handles the simulation
 /// each tick before requesting the rendering of the frame
 use crate::automatons::Automaton;
+use macroquad::ui;
+use macroquad::input;
 
+#[derive(PartialEq)]
 enum EngineState {
     Menu,
     Running,
@@ -13,20 +16,45 @@ enum EngineState {
 
 pub struct Engine {
     state: EngineState,
-    automatons: Vec<Box<dyn Automaton>>
+    automatons: Vec<Box<dyn Automaton>>,
+    currentAutomaton: Option<Box<dyn Automaton>>
 }
 
 impl Engine {
     pub fn new(automatons: Vec<Box<dyn Automaton>>) -> Engine {
-        Engine { state: EngineState::Menu, automatons}
+        Engine {
+            state: EngineState::Menu,
+            automatons,
+            currentAutomaton: None
+        }
     }
 
     /// Called each tick, handles all the stuff (input, simulation iteration, etc.)
     /// and finally requests the rendering of the frame
-    pub fn tick(&self) {
+    pub fn update(&mut self) {
         // Input - @TODO
-        println!("Test");
         // Simulation
-        // Rendering
+        match self.state {
+            EngineState::Menu => println!("Menu"),
+            EngineState::Running => println!("Running"),
+            EngineState::Paused => println!("Paused")
+        }
+
+        if input::is_key_pressed(input::KeyCode::Space) {
+            match self.state {
+                EngineState::Running => self.state = EngineState::Paused,
+                EngineState::Paused => self.state = EngineState::Running,
+                _ => ()
+            }
+        }
+        //self.currentAutomaton.as_mut().expect("NO_AUTOMATON").iterate();
+    }
+
+    pub fn render(&mut self) {
+        if self.state == EngineState::Menu {
+            if ui::root_ui().button(None, "Push me") {
+                self.state = EngineState::Running;
+            }
+        }
     }
 }
